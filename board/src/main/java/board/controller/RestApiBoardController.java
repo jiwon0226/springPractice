@@ -4,10 +4,13 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,9 +58,19 @@ public class RestApiBoardController {
     @Operation(summary = "게시판 상세 조회", description = "게시물 아이디와 일치하는 게시물의 상세 정보를 조회해서 반환합니다.")
     @Parameter(name = "boardIdx", description = "게시물 아이디", required = true)
     @GetMapping("/board/{boardIdx}")
-    public BoardDto openBoardDetail(@PathVariable("boardIdx") int boardIdx) throws Exception {
-        return boardService.selectBoardDetail(boardIdx);        
+    public ResponseEntity<Object> openBoardDetail(@PathVariable("boardIdx") int boardIdx) throws Exception {
+        BoardDto boardDto = boardService.selectBoardDetail(boardIdx);
+        if (boardDto == null) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("code", HttpStatus.NOT_FOUND.value());
+            result.put("name", HttpStatus.NOT_FOUND.name());
+            result.put("message", "게시판 번호 " + boardIdx + "와 일치하는 게시물이 존재하지 않습니다.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(boardDto);
+        }
     }
+
     
     // 수정 처리
     @PutMapping("/board/{boardIdx}")
