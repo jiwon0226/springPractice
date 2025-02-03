@@ -25,6 +25,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import board.dto.BoardDto;
 import board.dto.BoardFileDto;
 import board.service.BoardService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
@@ -35,6 +37,7 @@ public class RestApiBoardController {
     private BoardService boardService;
     
     // 목록 조회
+    @Operation(summary = "게시판 목록 조회", description = "등록된 게시물 목록을 조회해서 반환합니다.")
     @GetMapping("/board")
     public List<BoardDto> openBoardList() throws Exception {
         return boardService.selectBoardList();
@@ -49,6 +52,8 @@ public class RestApiBoardController {
     }
     
     // 상세 조회
+    @Operation(summary = "게시판 상세 조회", description = "게시물 아이디와 일치하는 게시물의 상세 정보를 조회해서 반환합니다.")
+    @Parameter(name = "boardIdx", description = "게시물 아이디", required = true)
     @GetMapping("/board/{boardIdx}")
     public BoardDto openBoardDetail(@PathVariable("boardIdx") int boardIdx) throws Exception {
         return boardService.selectBoardDetail(boardIdx);        
@@ -87,4 +92,3 @@ public class RestApiBoardController {
         response.getOutputStream().close();
     }
 }
-
