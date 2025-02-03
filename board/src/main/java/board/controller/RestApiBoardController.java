@@ -4,6 +4,7 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import board.dto.BoardDto;
 import board.dto.BoardFileDto;
+import board.dto.BoardListResponse;
 import board.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -42,9 +44,21 @@ public class RestApiBoardController {
     // 목록 조회
     @Operation(summary = "게시판 목록 조회", description = "등록된 게시물 목록을 조회해서 반환합니다.")
     @GetMapping("/board")
-    public List<BoardDto> openBoardList() throws Exception {
-        return boardService.selectBoardList();
+    public List<BoardListResponse> openBoardList() throws Exception {
+        List<BoardDto> boardList = boardService.selectBoardList();
+        
+        List<BoardListResponse> results = new ArrayList<>();
+        for (BoardDto dto : boardList) {
+            BoardListResponse res = new BoardListResponse();
+            res.setBoardIdx(dto.getBoardIdx());
+            res.setTitle(dto.getTitle());
+            res.setHitCnt(dto.getHitCnt());
+            res.setCreatedDt(dto.getCreatedDt());
+            results.add(res);
+        }
+        return results;
     }
+
     
     // 저장 처리
     @PostMapping(value = "/board", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
