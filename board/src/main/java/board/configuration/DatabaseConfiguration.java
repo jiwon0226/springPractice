@@ -44,8 +44,15 @@ public class DatabaseConfiguration {
         sessionFactoryBean.setMapperLocations(
             applicationContext.getResources("classpath:/mapper/**/sql-*.xml")
         );
-        return sessionFactoryBean.getObject();
-    }
+
+        org.apache.ibatis.session.Configuration configuration 
+        = new org.apache.ibatis.session.Configuration();
+	    configuration.setMapUnderscoreToCamelCase(true);
+	    sessionFactoryBean.setConfiguration(configuration);
+	    
+	    return sessionFactoryBean.getObject();
+	}
+
     
     // SqlSessionTemplate: MyBatis와 스프링 프레임워크를 통합할 때 사용하는 클래스 
     //                     SqlSesstion 인터페이스를 구현 
