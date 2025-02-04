@@ -7,12 +7,15 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,12 +45,14 @@ public class RestApiBoardController {
     private BoardService boardService;
     
     // 목록 조회
+    @CrossOrigin(origins = "http://localhost:5173")
     @Operation(summary = "게시판 목록 조회", description = "등록된 게시물 목록을 조회해서 반환합니다.")
     @GetMapping("/board")
     public List<BoardListResponse> openBoardList() throws Exception {
         List<BoardDto> boardList = boardService.selectBoardList();
         
         List<BoardListResponse> results = new ArrayList<>();
+        /*
         for (BoardDto dto : boardList) {
             BoardListResponse res = new BoardListResponse();
             res.setBoardIdx(dto.getBoardIdx());
@@ -56,8 +61,14 @@ public class RestApiBoardController {
             res.setCreatedDt(dto.getCreatedDt());
             results.add(res);
         }
+        */
+        boardList.forEach(dto -> results.add(new ModelMapper().map(dto, BoardListResponse.class)));
         return results;
     }
+
+
+
+
 
     
     // 저장 처리
@@ -84,6 +95,7 @@ public class RestApiBoardController {
             return ResponseEntity.status(HttpStatus.OK).body(boardDto);
         }
     }
+
 
     
     // 수정 처리
