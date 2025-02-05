@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -83,6 +84,6 @@ public class JpaBoardServiceImpl implements JpaBoardService {
 
     @Override
     public BoardFileEntity selectBoardFileInfo(int idx, int boardIdx) {
-        return jpaBoardRepository.findBoardFile(boardIdx, boardIdx);
+        return jpaBoardRepository.findBoardFile(boardIdx, idx);
     }
 }
